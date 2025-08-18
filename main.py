@@ -1,85 +1,80 @@
 import streamlit as st
-import random
 
-# --- 기본 설정 ---
-st.set_page_config(page_title="MBTI 직업 추천", layout="centered", page_icon="💼")
+st.set_page_config(page_title="인물 맞추기 퀴즈", page_icon="🧩", layout="centered")
 
-# --- CSS 스타일 ---
-st.markdown("""
-    <style>
-    body {
-        background-color: #fef6ff;
-    }
-    .stApp {
-        background-image: linear-gradient(to right, #fbc2eb, #a6c1ee);
-        color: #000000;
-    }
-    .title {
-        font-size: 48px;
-        font-weight: bold;
-        color: #6a0572;
-        text-align: center;
-        padding: 10px;
-    }
-    .subtitle {
-        font-size: 24px;
-        color: #333;
-        text-align: center;
-    }
-    .mbti-box {
-        background-color: #ffffffaa;
-        padding: 20px;
-        border-radius: 15px;
-        margin-top: 20px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+st.title("🧠 인물 맞추기 퀴즈")
+st.write("아래 인물의 이름을 맞춰보세요!")
 
-# --- 타이틀 ---
-st.markdown('<div class="title">💡 MBTI 기반 진로 추천 웹 앱</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">당신의 성격 유형에 맞는 직업을 찾아보세요!</div>', unsafe_allow_html=True)
-
-st.markdown('<div class="mbti-box">', unsafe_allow_html=True)
-
-# --- MBTI 리스트 ---
-mbti_types = [
-    "ISTJ", "ISFJ", "INFJ", "INTJ",
-    "ISTP", "ISFP", "INFP", "INTP",
-    "ESTP", "ESFP", "ENFP", "ENTP",
-    "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+# 문제 데이터: 사진 URL + 정답 인물 이름 + 선택지(인물 이름 4개)
+quiz_data = [
+    {
+        "image": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Elon_Musk_Royal_Society_%28crop2%29.jpg",
+        "answer": "Elon Musk",
+        "choices": ["Elon Musk", "Jeff Bezos", "Bill Gates", "Steve Jobs"]
+    },
+    {
+        "image": "https://upload.wikimedia.org/wikipedia/commons/4/48/Emma_Watson_2013.jpg",
+        "answer": "Emma Watson",
+        "choices": ["Emma Watson", "Scarlett Johansson", "Natalie Portman", "Jennifer Lawrence"]
+    },
+    {
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/57/Barack_Obama_official_portrait_2012_cropped.jpg",
+        "answer": "Barack Obama",
+        "choices": ["Barack Obama", "Joe Biden", "Donald Trump", "George Bush"]
+    },
 ]
 
-mbti_descriptions = {
-    "INTJ": "전략가형 - 독창적이고 분석적인 성향",
-    "INFP": "중재자형 - 이상주의적이고 창의적인 성향",
-    "ENTP": "변론가형 - 재치 있고 호기심 많은 성향",
-    "ISFJ": "수호자형 - 헌신적이고 책임감 있는 성향",
-    # 필요한 만큼 추가 가능
-}
+# 세션 상태 초기화
+if "q_index" not in st.session_state:
+    st.session_state.q_index = 0
+if "score" not in st.session_state:
+    st.session_state.score = 0
+if "answered" not in st.session_state:
+    st.session_state.answered = False
 
-career_recommendations = {
-    "INTJ": ["데이터 과학자", "전략 컨설턴트", "AI 연구원"],
-    "INFP": ["작가", "디자이너", "심리상담가"],
-    "ENTP": ["기획자", "스타트업 창업자", "마케터"],
-    "ISFJ": ["간호사", "교사", "사회복지사"],
-    # 나머지 MBTI는 비슷하게 추가 가능
-}
+def reset_quiz():
+    st.session_state.q_index = 0
+    st.session_state.score = 0
+    st.session_state.answered = False
 
-# --- 사용자 입력 ---
-selected_mbti = st.selectbox("당신의 MBTI를 선택하세요:", mbti_types)
+def check_answer(selected):
+    correct = quiz_data[st.session_state.q_index]["answer"]
+    if selected == correct:
+        st.session_state.score += 1
+        st.success("정답입니다! 🎉")
+    else:
+        st.error(f"오답입니다! 정답은 {correct} 입니다.")
+    st.session_state.answered = True
 
-# --- 추천 결과 출력 ---
-if selected_mbti:
-    st.subheader(f"🧠 {selected_mbti} 유형 설명")
-    st.info(mbti_descriptions.get(selected_mbti, "아직 준비 중인 설명입니다."))
+# 퀴즈 진행
+if st.session_state.q_index < len(quiz_data):
+    q = quiz_data[st.session_state.q_index]
 
-    st.subheader("✨ 추천 직업")
-    recommended_jobs = career_recommendations.get(selected_mbti, ["추천 직업 정보가 아직 없습니다."])
-    for job in recommended_jobs:
-        st.success(f"✅ {job}")
+    st.image(q["image"], width=300)
+    st.write(f"**문제 {st.session_state.q_index + 1} / {len(quiz_data)}**: 이 인물의 이름은 무엇일까요?")
 
-st.markdown('</div>', unsafe_allow_html=True)
+    if not st.session_state.answered:
+        choice = st.radio("선택하세요:", q["choices"])
+        if st.button("제출"):
+            check_answer(choice)
+    else:
+        if st.button("다음 문제"):
+            st.session_state.q_index += 1
+            st.session_state.answered = False
+            st.experimental_rerun()
 
-# --- 바닥글 ---
-st.markdown("---")
-st.markdown("© 2025 MBTI 진로 추천 웹 앱 | 만든이: 당신의 이름", unsafe_allow_html=True)
+else:
+    st.write("---")
+    st.write(f"🎉 퀴즈 완료! 당신의 점수는 **{st.session_state.score} / {len(quiz_data)}** 입니다.")
+
+    if st.session_state.score == len(quiz_data):
+        st.balloons()
+        st.success("🎊 완벽해요! 당신은 인물 퀴즈 마스터!")
+    elif st.session_state.score >= len(quiz_data) // 2:
+        st.success("👍 잘했어요! 조금만 더 연습해보세요!")
+    else:
+        st.info("😅 좀 더 노력하면 좋아질 거예요! 다시 도전해보세요!")
+
+    if st.button("처음부터 다시하기"):
+        reset_quiz()
+        st.experimental_rerun()
