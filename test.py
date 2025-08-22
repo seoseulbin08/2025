@@ -27,13 +27,16 @@ risk_score = (
 # 점수를 0~100 사이로 정규화
 risk_score = np.clip(risk_score, 0, 100)
 
-# 위험도 카테고리
+# 위험도 카테고리 (4단계)
 if risk_score < 30:
     category = "낮음 😊"
 elif risk_score < 60:
     category = "보통 😐"
-else:
+elif risk_score < 80:
     category = "높음 ⚠️"
+else:
+    category = "위험 🚨"
+
 
 # 결과 출력
 st.subheader("📊 결과")
