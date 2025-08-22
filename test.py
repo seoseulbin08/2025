@@ -24,23 +24,22 @@ risk_score = (
     (sugar - 50) * 0.05
 )
 
-# 점수를 0~100 사이로 정규화
-risk_score = np.clip(risk_score, 0, 100)
+# 점수를 0~10 사이로 정규화
+risk_score = np.clip(risk_score / 10, 0, 10)  # 기존 계산값을 10으로 나눠서 스케일 축소
 
 # 위험도 카테고리 (4단계)
-if risk_score < 30:
+if risk_score < 3:
     category = "낮음 😊"
-elif risk_score < 60:
+elif risk_score < 6:
     category = "보통 😐"
-elif risk_score < 80:
+elif risk_score < 8:
     category = "높음 ⚠️"
 else:
     category = "위험 🚨"
 
-
 # 결과 출력
 st.subheader("📊 결과")
-st.metric(label="예측된 생활습관병 위험도 점수", value=f"{risk_score:.1f} / 100")
+st.metric(label="예측된 생활습관병 위험도 점수", value=f"{risk_score:.1f} / 10")
 st.write(f"예상 위험 단계: **{category}**")
 
 # 추가 시각화
