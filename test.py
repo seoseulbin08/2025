@@ -45,6 +45,11 @@ labels = ["Risk Score", "Remaining"]
 sizes = [risk_score, 10 - risk_score]
 
 fig, ax = plt.subplots()
+ax.pie(sizes, labels=labels, autopct='%1.1f pts', startangle=90)  # ✅ 영어로 변경
+ax.axis("equal")
+st.pyplot(fig)
+
+fig, ax = plt.subplots()
 ax.pie(sizes, labels=labels, autopct='%1.1f점', startangle=90)  # % → '점' 표시
 ax.axis("equal")
 st.pyplot(fig)
