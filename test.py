@@ -43,7 +43,7 @@ st.write(f"예상 위험 단계: **{category}**")
 # 추가 시각화
 import matplotlib.pyplot as plt
 
-labels = ["위험도 점수", "안전 영역"]
+labels = ["Risk Score", "Safe Zone"]
 sizes = [risk_score, 100-risk_score]
 
 fig, ax = plt.subplots()
