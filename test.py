@@ -49,11 +49,6 @@ ax.pie(sizes, labels=labels, autopct='%1.1f', startangle=90)  # ✅ 영어로 �
 ax.axis("equal")
 st.pyplot(fig)
 
-fig, ax = plt.subplots()
-ax.pie(sizes, labels=labels, autopct='%1.1f점', startangle=90)  # % → '점' 표시
-ax.axis("equal")
-st.pyplot(fig)
-
 st.info(
     """
     ⚠️ 이 결과는 **실제 진단이 아님**을 유의하세요.  
